@@ -4,14 +4,15 @@ import glob
 import hashlib
 import pandas as pd
 import xml.etree.ElementTree as ET
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.compat.v1.disable_eager_execution()
 import random
 
 from PIL import Image
 from object_detection.utils import dataset_util
 
 '''
-this script automatically divides dataset into training and evaluation (10% for evaluation)
+this script automatically divides dataset into training and evaluation (20% for evaluation)
 this scripts also shuffles the dataset before converting it into tfrecords
 if u have different structure of dataset (rather than pascal VOC ) u need to change
 the paths and names input directories(images and annotation) and output tfrecords names.
@@ -105,7 +106,7 @@ def main(_):
     #provide the path to annotation xml files directory
     filename_list=tf.train.match_filenames_once("./Annotations/*.xml")
     init = (tf.global_variables_initializer(), tf.local_variables_initializer())
-    sess=tf.Session()
+    sess=tf.compat.v1.Session()
     sess.run(init)
     list=sess.run(filename_list)
     random.shuffle(list)   #shuffle files list
@@ -114,7 +115,7 @@ def main(_):
     trn=0   #to count number of images for training
     for xml_file in list:
       example = create_example(xml_file)
-      if (i%10)==0:  #each 10th file (xml and image) write it for evaluation
+      if (i%5)==0:  #each 10th file (xml and image) write it for evaluation
          writer_test.write(example.SerializeToString())
          tst=tst+1
       else:          #the rest for training
