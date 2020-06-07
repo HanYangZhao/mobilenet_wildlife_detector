@@ -4,7 +4,7 @@
 
 # What is it?
 
-This repo contains a neural network model to detect animals from video or images. It is similar to the [megadetector](https://github.com/microsoft/CameraTraps/blob/master/megadetector.md). However it is based on SSD-MobilnetV2 instead of Faster-RCNN + InceptionResNetv2. This way, it can be used with TFLite as well as the Coral TPU Acccelerator since Faster-RCNN is not supported as of June 2020 in TFLite. Of course the accuracy will not be as good as the megadetector, but the inference speed is much faster. It was trained using the [ENA-24](http://lila.science/datasets/ena24detection) dataset using transfer learning (only the last few layers of the Mobilenet is trained). 
+This repo contains a neural network model to detect animals from video or images. It is similar to the [megadetector](https://github.com/microsoft/CameraTraps/blob/master/megadetector.md). However it is based on SSD-MobilnetV2 instead of Faster-RCNN + InceptionResNetv2. This way, it can be used with TFLite as well as the Coral TPU Acccelerator since Faster-RCNN is not supported as of June 2020 in TFLite. Of course the accuracy will not be as good as the megadetector, but the inference speed is much faster. It was trained using the [ENA-24](http://lila.science/datasets/ena24detection) dataset using transfer learning (only the last few layers of the Mobilenet is re-trained) on 21 difference classes of wild animals commonly seens in North America. Note that it model will not classify the type of the animal
 
 # How to use
 ## Pre-requisite
