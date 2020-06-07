@@ -1,3 +1,6 @@
+![Demo](https://github.com/HanYangZhao/mobilenet_wildlife_detector/raw/master/demo.gif)
+
+
 # What is it?
 
 This repo contains a neural network model to detect animals from video or images. It is similar to the Faster-RCNN + InceptionResNetv2 architecture. This way, it can be used with TFLite as well as the Coral TPU Acccelerator since Faster-RCNN is not supported as of June 2020 in TFLite. Of course the accuracy will not be as good as the megadetector, but the inference speed is much faster. It was trained using the [ENA-24](http://lila.science/datasets/ena24detection) dataset using transfer learning (only the last few layers of the Mobilenet is trained). 
