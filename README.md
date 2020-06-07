@@ -1,5 +1,6 @@
 ![Demo](https://github.com/HanYangZhao/mobilenet_wildlife_detector/raw/master/demo.gif)
 
+*Running on a RPI4 + Coral EdgeTPU*
 
 # What is it?
 
