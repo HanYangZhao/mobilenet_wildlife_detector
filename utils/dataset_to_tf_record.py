@@ -29,6 +29,39 @@ to run this script:
 $ python dataset_to_tfrecord.py 
 
 '''
+
+className = (
+  'Bird',
+  'Eastern Gray Squirrel',
+  'Eastern Chipmunk',
+  'Woodchuck',
+  'Wild Turkey',
+  'White_Tailed_Deer',
+  'Virginia Opossum',
+  'Eastern Cottontail',
+  'Human',
+  'Vehicle',
+  'Striped Skunk',
+  'Red Fox',
+  'Eastern Fox Squirrel',
+  'Northen Raccoon',
+  'Grey Fox',
+  'Horse',
+  'Dog',
+  'American Crow',
+  'Chicken',
+  'Domestic Cat',
+  'Coyote',
+  'Bobcat',
+  'Ameican Black Bear'
+)
+
+
+outputClassName = (
+  "Animal",
+  "Human",
+  "Vehicle"
+  )
 def create_example(xml_file):
         #process the xml file
         tree = ET.parse(xml_file)
@@ -47,12 +80,18 @@ def create_example(xml_file):
         truncated = []
         poses = []
         difficult_obj = []
-        for member in root.findall('object'):
-           classes_text.append('Person'.encode('utf8'))
-           xmin.append(float(member[4][0].text) / width)
-           ymin.append(float(member[4][1].text) / height)
-           xmax.append(float(member[4][2].text) / width)
-           ymax.append(float(member[4][3].text) / height)
+        for obj in root.findall('object'):
+           # classes_text.append('Person'.encode('utf8'))
+           name = obj[0].text
+           if(name == "Human" or name == "Vehicle"):
+            classes_text.append(name.encode('utf8'))
+           else:
+            classes_text.append("Animal".encode('utf8'))
+            name = "Animal"
+           xmin.append(float(obj[4][0].text) / width)
+           ymin.append(float(obj[4][1].text) / height)
+           xmax.append(float(obj[4][2].text) / width)
+           ymax.append(float(obj[4][3].text) / height)
            difficult_obj.append(0)
            #if you have more than one classes in dataset you can change the next line
            #to read the class from the xml file and change the class label into its 
@@ -65,7 +104,8 @@ def create_example(xml_file):
                   return 2
 	      and so on.....
            '''
-           classes.append(1)   # i wrote 1 because i have only one class(person)
+
+           classes.append(outputClassName.index(name))   # i wrote 1 because i have only one class(person)
            truncated.append(0)
            poses.append('Unspecified'.encode('utf8'))
 
