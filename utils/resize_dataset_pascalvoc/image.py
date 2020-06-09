@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-from utils import get_file_name
+from utils import get_file_name,create_path
 import xml.etree.ElementTree as ET
 
 
@@ -71,11 +71,15 @@ def resize(image_path,
             int(float(ymax.text))
             ])
 
+    img_path = output_path + "/JPEGImages"
+    xml_path = output_path + "/Annotations"
+    create_path(img_path)
+    create_path(xml_path)
     (_, file_name, ext) = get_file_name(image_path)
-    cv2.imwrite(os.path.join(output_path, '.'.join([file_name, ext])), image)
+    cv2.imwrite(os.path.join(img_path, '.'.join([file_name, ext])), image)
 
     tree = ET.ElementTree(xmlRoot)
-    tree.write('{}/{}.xml'.format(output_path, file_name, ext))
+    tree.write('{}/{}.xml'.format(xml_path, file_name, ext))
     if int(save_box_images):
         save_path = '{}/boxes_images/boxed_{}'.format(output_path, ''.join([file_name, '.', ext]))
         draw_box(newBoxes, image, save_path)
