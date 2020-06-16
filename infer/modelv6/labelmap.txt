@@ -1,0 +1,3 @@
+0  Animal
+1  Human
+2  Vehicle
