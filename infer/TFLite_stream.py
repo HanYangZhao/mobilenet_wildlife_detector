@@ -24,6 +24,7 @@ from threading import Thread
 import importlib.util
 import uuid
 import queue
+import collections
 
 detection_count = 0
 last_detection_time = time.time()
@@ -42,11 +43,11 @@ class VideoStream:
         self.saved_frame = None 
         self.previous_checktime = time.time()
         # Read first frame from the stream
-        self.frame = queue.Queue(maxsize=10)
+        self.frame = collections.deque([]) 
         self.temp_grame = None
         
         (self.grabbed, x) = self.stream.read()
-        self.frame.put(x)
+        self.frame.append(x)
 
 	# Variable to control when the camera is stopped
         self.stopped = False
@@ -85,7 +86,7 @@ class VideoStream:
             if np.shape(frame1) != () and self.grabbed == True:
                 frame = frame1.copy()
                 self.temp_frame = frame
-                self.frame.put(cv2.resize(frame, (self.width, self.height)))
+                self.frame.append(cv2.resize(frame, (self.width, self.height)))
                 
             # if(self.check_stream_alive(self.temp_frame) == False):
             #     print("restarting stream")
@@ -96,7 +97,10 @@ class VideoStream:
 
     def read(self):
 	# Return the most recent frame
-        return self.frame.get()
+        if self.frame:
+            return self.frame.pop()
+        else:
+            return None
 
     def stop(self):
 	# Indicate that the camera and thread should be stopped
@@ -113,7 +117,7 @@ parser.add_argument('--graph', help='Name of the .tflite file, if different than
 parser.add_argument('--labels', help='Name of the labelmap file, if different than labelmap.txt',
                     default='labelmap.txt')
 parser.add_argument('--threshold', help='Minimum confidence threshold for displaying detected objects',
-                    default=0.65)
+                    default=0.5)
 parser.add_argument('--resolution', help='Desired webcam resolution in WxH. If the webcam does not support the resolution entered, errors may occur.',
                     default='1280x720')
 parser.add_argument('--edgetpu', help='Use Coral Edge TPU Accelerator to speed up detection',
@@ -206,7 +210,7 @@ while True:
 
     # Grab frame from video stream
     frame1 = videostream.read()
-    if np.shape(frame1) == ():
+    if frame1 is None or np.shape(frame1) == () :
         continue
 
     # Acquire frame and resize to expected shape [1xHxWx3]
@@ -243,17 +247,18 @@ while True:
             cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
 
             # Draw label
-            object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
-            label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
-            labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2) # Get font size
-            label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
-            cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
-            cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
-            detection_count += 1
-            if detection_count >= 30 :
-                cv2.imwrite(label + str(uuid.uuid4()) + '.jpg',frame)
-                detection_count = 0
-            last_detection_time = time.time()
+            if classes[i] == 0:
+                object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
+                label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
+                labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2) # Get font size
+                label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
+                cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
+                cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
+                detection_count += 1
+                if detection_count >= 30 :
+                    cv2.imwrite(label + str(uuid.uuid4()) + '.jpg',frame)
+                    detection_count = 0
+                last_detection_time = time.time()
     # Draw framerate in corner of frame
     cv2.putText(frame,'FPS: {0:.2f}'.format(frame_rate_calc),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
 
