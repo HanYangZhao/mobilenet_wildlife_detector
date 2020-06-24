@@ -25,7 +25,7 @@ This repo contains a neural network model to detect animals from video or images
 	```
 
 * python3
-* pensorflow (either 2.x or 1.15)
+* tensorflow (either 2.x or 1.15)
 * picamera (if using Picam)
 * opencv-python
 * numpy
