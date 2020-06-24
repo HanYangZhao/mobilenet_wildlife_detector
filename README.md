@@ -1,4 +1,10 @@
-![Demo](https://github.com/HanYangZhao/mobilenet_wildlife_detector/raw/master/demo.gif)
+![Demo](https://github.com/HanYangZhao/mobilenet_wildlife_detector/raw/master/demo/demo.gif)
+
+![Rabbit](https://github.com/HanYangZhao/mobilenet_wildlife_detector/raw/master/demo/rabbit1.jpg)
+
+![Rabbit2](https://github.com/HanYangZhao/mobilenet_wildlife_detector/raw/master/demo/rabbit2.jpg)
+
+![squirrel](https://github.com/HanYangZhao/mobilenet_wildlife_detector/raw/master/demo/squirrel.jpg)
 
 *Running on a RPI4 + Coral EdgeTPU*
 
