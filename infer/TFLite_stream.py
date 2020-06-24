@@ -25,7 +25,7 @@ import importlib.util
 import uuid
 import queue
 import collections
-
+from datetime import datetime
 detection_count = 0
 last_detection_time = time.time()
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
@@ -117,7 +117,7 @@ parser.add_argument('--graph', help='Name of the .tflite file, if different than
 parser.add_argument('--labels', help='Name of the labelmap file, if different than labelmap.txt',
                     default='labelmap.txt')
 parser.add_argument('--threshold', help='Minimum confidence threshold for displaying detected objects',
-                    default=0.5)
+                    default=0.65)
 parser.add_argument('--resolution', help='Desired webcam resolution in WxH. If the webcam does not support the resolution entered, errors may occur.',
                     default='1280x720')
 parser.add_argument('--edgetpu', help='Use Coral Edge TPU Accelerator to speed up detection',
@@ -256,7 +256,7 @@ while True:
                 cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
                 detection_count += 1
                 if detection_count >= 30 :
-                    cv2.imwrite(label + str(uuid.uuid4()) + '.jpg',frame)
+                    cv2.imwrite(str(datetime.now().strftime('%Y-%m-%d-%H:%M:%S')) + "_" + object_name  + '.jpg',frame)
                     detection_count = 0
                 last_detection_time = time.time()
     # Draw framerate in corner of frame
